@@ -1,0 +1,4 @@
+*.config
+packages/
+bin/
+debug/
