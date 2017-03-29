@@ -107,9 +107,20 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\StatController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Experience.cs" />
+    <Compile Include="Models\Gender.cs" />
+    <Compile Include="Models\Industry.cs" />
+    <Compile Include="Models\Occupation.cs" />
+    <Compile Include="Models\Salary.cs" />
+    <Compile Include="Models\SelfIdentify.cs" />
+    <Compile Include="Models\Stat.cs" />
+    <Compile Include="Models\Operations\StatOperations.cs" />
+    <Compile Include="Models\TechUsing.cs" />
+    <Compile Include="Models\TechWanting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -124,8 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
+    <Folder Include="Views\Stat\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
