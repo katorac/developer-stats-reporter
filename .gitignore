@@ -1,4 +1,9 @@
 *.config
 packages/
+./packages
 bin/
 debug/
+*.user
+*.ncb
+*.sub
+*.sdf
