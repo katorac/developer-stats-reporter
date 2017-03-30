@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Countries</h2>
+<select>
+    @foreach (var item in Model)
+    {
+        <option>@item</option>
+    }
+</select>
+

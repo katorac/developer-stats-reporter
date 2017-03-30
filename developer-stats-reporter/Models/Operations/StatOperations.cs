@@ -6,7 +6,7 @@ using System.Web;
 
 namespace developer_stats_reporter.Models.Operations
 {
-    public class StatOperations
+    public class StatOperations : IStatOperations
     {
         private readonly IEnumerable<Stat> _statCollection;
 
@@ -179,5 +179,13 @@ namespace developer_stats_reporter.Models.Operations
             return industryStats;
         }
 
+        public IEnumerable<string> GetCountries()
+        {
+            var countries = _statCollection.Where(stat => stat.Country != "" && stat.Country.StartsWith("\"") == false && stat.Country.StartsWith("Other") == false)
+                .Select(stat => stat.Country)
+                .OrderBy(stat => stat).Distinct();
+
+            return countries;
+        }
     }
 }
