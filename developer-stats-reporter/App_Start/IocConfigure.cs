@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
@@ -17,7 +19,8 @@ namespace developer_stats_reporter
             var builder = new ContainerBuilder();
 
             //HomeController
-            builder.RegisterType<HomeController>().InstancePerRequest();
+            //builder.RegisterType<HomeController>().InstancePerRequest();
+            builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
             //StatOperations
             builder.RegisterType<StatOperations>().As<IStatOperations>().InstancePerDependency();

@@ -4,10 +4,63 @@
 }
 
 <h2>Countries</h2>
-<select>
+<select class="form-control" id="countries">
     @foreach (var item in Model)
     {
-        <option>@item</option>
+        <option value="@item">@item</option>
     }
 </select>
+<button class="btn btn-success" data-bind="click: getGenderStats">Get Stats</button>
 
+<ul data-bind="foreach: genderCollection">
+    <li data-bind="text: genderName"></li>
+    <li data-bind="text: genderCount"></li>
+    <br/>
+</ul>
+
+@section scripts{
+    <script>
+
+        function getStatsApi(method, country) {
+            return $.ajax({
+                url: `/api/stat/${method}/${country}`,
+                type: "GET"
+            });
+        }
+
+        function StatsViewModel() {
+            var self = this;
+            
+            self.genderCollection = ko.observableArray([]);
+
+            self.getGenderStats = function() {
+                var country = $("#countries").val();
+                var request = getStatsApi("getGenderStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.genderCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.genderCollection.push(new Gender(result[i].GenderName, result[i].GenderCount));
+                    }
+                });
+            }
+        }
+
+        //Function Constructors:
+
+        var Gender = (function() {
+            function gender(genderName, genderCount) {
+                this.genderName = genderName;
+                this.genderCount = genderCount;
+            }
+
+            return gender;
+        })();
+
+        ko.applyBindings(new StatsViewModel());
+
+        //$("#showStats").click(function() {
+        //    var country = $("#countries").val();
+        //    console.log(country);
+        //});
+    </script>
+}

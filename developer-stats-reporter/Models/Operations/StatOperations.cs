@@ -168,7 +168,7 @@ namespace developer_stats_reporter.Models.Operations
 
         public IEnumerable<Industry> GetIndustryStats(string country)
         {
-            var industryStats = _statCollection.Where(stat => stat.Country == country & stat.Industry != "")
+            var industryStats = _statCollection.Where(stat => stat.Country == country & stat.Industry != "" & stat.Industry.StartsWith("Other") == false)
                 .GroupBy(stat => stat.Industry)
                 .Select(stat => new Industry
                 {
