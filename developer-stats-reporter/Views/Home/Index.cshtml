@@ -10,12 +10,66 @@
         <option value="@item">@item</option>
     }
 </select>
-<button class="btn btn-success" data-bind="click: getGenderStats">Get Stats</button>
 
+<a href="#" data-bind="click: getGenderStats">Gender</a>
+<h2 data-bind="text: genderCountry()"></h2>
 <ul data-bind="foreach: genderCollection">
     <li data-bind="text: genderName"></li>
     <li data-bind="text: genderCount"></li>
     <br/>
+</ul>
+
+<a href="#" data-bind="click: getSelfIdentityStats">Self Identify</a>
+<h2 data-bind="if: selfIdentifyCountry()">Self Identify stats for <span data-bind="text: selfIdentifyCountry()"></span> </h2>
+<ul data-bind="foreach: selfIdentifyCollection">
+    <li data-bind="text: selfIdentifyName"></li>
+    <li data-bind="text: selfIdentifyCount"></li>
+    <br />
+</ul>
+
+<a href="#" data-bind="click: getOccupationStats">Occupation</a>
+<h2 data-bind="if: occupationCountry()">Occupation stats for <span data-bind="text: occupationCountry()"></span> </h2>
+<ul data-bind="foreach: occupationCollection">
+    <li data-bind="text: occupationName"></li>
+    <li data-bind="text: occupationCount"></li>
+    <br />
+</ul>
+
+<a href="#" data-bind="click: getExperienceStats">Experience</a>
+<h2 data-bind="if: experienceCountry()">Experience stats for <span data-bind="text: experienceCountry()"></span> </h2>
+<ul data-bind="if: experienceCollection()">
+    <li data-bind="text: experienceCollection().toFixed(2)"></li>
+
+</ul>
+
+<a href="#" data-bind="click: getSalaryStats">Salary</a>
+<h2 data-bind="if: salaryCountry()">Salary stats for <span data-bind="text: salaryCountry()"></span> </h2>
+<ul data-bind="if: salaryCollection()">
+    <li>$<span data-bind="text: salaryCollection().toFixed(0)"></span> US </li>
+</ul>
+
+<a href="#" data-bind="click: getTechUsingStats">Tech Using</a>
+<h2 data-bind="if: techUsingCountry()">Tech Using stats for <span data-bind="text: techUsingCountry()"></span> </h2>
+<ul data-bind="foreach: techUsingCollection">
+    <li data-bind="text: techUsingName"></li>
+    <li data-bind="text: techUsingCount"></li>
+    <br />
+</ul>
+
+<a href="#" data-bind="click: getTechWantingStats">Tech Wanting</a>
+<h2 data-bind="if: techWantingCountry()">Tech Wanting stats for <span data-bind="text: techWantingCountry()"></span> </h2>
+<ul data-bind="foreach: techWantingCollection">
+    <li data-bind="text: techWantingName"></li>
+    <li data-bind="text: techWantingCount"></li>
+    <br />
+</ul>
+
+<a href="#" data-bind="click: getIndustryStats">Industry </a>
+<h2 data-bind="if: industryCountry()">Industry stats for <span data-bind="text: industryCountry()"></span> </h2>
+<ul data-bind="foreach: industryCollection">
+    <li data-bind="text: industryName"></li>
+    <li data-bind="text: industryCount"></li>
+    <br />
 </ul>
 
 @section scripts{
@@ -30,11 +84,29 @@
 
         function StatsViewModel() {
             var self = this;
-            
+
+            self.genderCountry = ko.observable();
+            self.selfIdentifyCountry = ko.observable();
+            self.occupationCountry = ko.observable();
+            self.experienceCountry = ko.observable();
+            self.salaryCountry = ko.observable();
+            self.techUsingCountry = ko.observable();
+            self.techWantingCountry = ko.observable();
+            self.industryCountry = ko.observable();
+
+
             self.genderCollection = ko.observableArray([]);
+            self.selfIdentifyCollection = ko.observableArray([]);
+            self.occupationCollection = ko.observableArray([]);
+            self.experienceCollection = ko.observable();
+            self.salaryCollection = ko.observable();
+            self.techUsingCollection = ko.observableArray([]);
+            self.techWantingCollection = ko.observableArray([]);
+            self.industryCollection = ko.observableArray([]);
 
             self.getGenderStats = function() {
                 var country = $("#countries").val();
+                self.genderCountry(country);
                 var request = getStatsApi("getGenderStats", country).done(function () {
                     var result = request.responseJSON;
                     self.genderCollection([]);
@@ -43,24 +115,158 @@
                     }
                 });
             }
+            self.getSelfIdentityStats = function() {
+                var country = $("#countries").val();
+                self.selfIdentifyCountry(country);
+                var request = getStatsApi("getSelfIdentifyStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.selfIdentifyCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.selfIdentifyCollection
+                            .push(new SelfIdentify(result[i].SelfIdentifyName, result[i].SelfIdentifyCount));
+                    }
+                });
+            }
+            self.getOccupationStats = function() {
+                var country = $("#countries").val();
+                self.occupationCountry(country);
+                var request = getStatsApi("getOccupationStats", country).done(function() {
+                    var result = request.responseJSON;
+                    self.occupationCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.occupationCollection
+                            .push(new Occupation(result[i].OccupationName, result[i].OccupationCount));
+                    }
+                });
+            }
+            self.getExperienceStats = function() {
+                var country = $("#countries").val();
+                self.experienceCountry(country);
+                var request = getStatsApi("getExperienceStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.experienceCollection(result.YearsAgv);
+                });
+            }
+            self.getSalaryStats = function() {
+                var country = $("#countries").val();
+                self.salaryCountry(country);
+                var request = getStatsApi("getSalaryStats", country).done(function() {
+                    var result = request.responseJSON;
+                    self.salaryCollection(result.SalaryAvg);
+                });
+            }
+            self.getTechUsingStats = function () {
+                var country = $("#countries").val();
+                self.techUsingCountry(country);
+                var request = getStatsApi("getTechUsingStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.techUsingCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.techUsingCollection
+                            .push(new TechUsing(result[i].TechUsingName, result[i].TechUsingCount));
+                    }
+                });
+            }
+            self.getTechWantingStats = function () {
+                var country = $("#countries").val();
+                self.techWantingCountry(country);
+                var request = getStatsApi("getTechWantingStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.techWantingCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.techWantingCollection
+                            .push(new TechWanting(result[i].TechWantingName, result[i].TechWantingCount));
+                    }
+                });
+            }
+            self.getIndustryStats = function () {
+                var country = $("#countries").val();
+                self.industryCountry(country);
+                var request = getStatsApi("getIndustryStats", country).done(function () {
+                    var result = request.responseJSON;
+                    self.industryCollection([]);
+                    for (var i = 0; i < result.length; i++) {
+                        self.industryCollection
+                            .push(new Industry(result[i].IndustryName, result[i].IndustryCount));
+                    }
+                });
+            }
         }
 
         //Function Constructors:
 
         var Gender = (function() {
-            function gender(genderName, genderCount) {
-                this.genderName = genderName;
-                this.genderCount = genderCount;
+            function gender(name, count) {
+                this.genderName = name;
+                this.genderCount = count;
             }
 
             return gender;
         })();
 
+        var SelfIdentify = (function() {
+            function selfIdentify(name, count) {
+                this.selfIdentifyName = name;
+                this.selfIdentifyCount = count;
+            }
+
+            return selfIdentify;
+        })();
+
+        var Occupation = (function() {
+            function occupation(name, count) {
+                this.occupationName = name;
+                this.occupationCount = count;
+            }
+
+            return occupation;
+        })();
+
+        var Experience = (function() {
+            function experience(yearsAvg) {
+                this.yearsAvg = yearsAvg;
+            }
+
+            return experience;
+        })();
+
+        var Salary = (function() {
+            function salary(salaryAvg) {
+                this.salaryAvg = salaryAvg;
+            }
+
+            return salary;
+        })();
+
+        var TechUsing = (function() {
+            function techUsing(name, count) {
+                this.techUsingName = name;
+                this.techUsingCount = count;
+            }
+
+            return techUsing;
+        })();
+
+        var TechWanting = (function() {
+            function techWanting(name, count) {
+                this.techWantingName = name;
+                this.techWantingCount = count;
+            }
+
+            return techWanting;
+        })();
+
+        var Industry = (function() {
+            function industry(name, count) {
+                this.industryName = name;
+                this.industryCount = count;
+            }
+
+            return industry;
+        })();
+
         ko.applyBindings(new StatsViewModel());
 
-        //$("#showStats").click(function() {
-        //    var country = $("#countries").val();
-        //    console.log(country);
-        //});
+
     </script>
 }
