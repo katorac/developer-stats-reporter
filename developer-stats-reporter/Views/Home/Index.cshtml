@@ -2,75 +2,135 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Countries</h2>
-<select class="form-control" id="countries">
-    @foreach (var item in Model)
-    {
-        <option value="@item">@item</option>
+<style>
+    #heading {
+        position: relative;
+        left: 25%;
     }
-</select>
 
-<a href="#" data-bind="click: getGenderStats">Gender</a>
-<h2 data-bind="text: genderCountry()"></h2>
-<ul data-bind="foreach: genderCollection">
-    <li data-bind="text: genderName"></li>
-    <li data-bind="text: genderCount"></li>
-    <br/>
-</ul>
+    a:hover, a:visited, a:link, a:active {
+        font-family: verdana;
+        font-size: large;
+        text-decoration: none;
+        color: chocolate;
+    }
 
-<a href="#" data-bind="click: getSelfIdentityStats">Self Identify</a>
-<h2 data-bind="if: selfIdentifyCountry()">Self Identify stats for <span data-bind="text: selfIdentifyCountry()"></span> </h2>
-<ul data-bind="foreach: selfIdentifyCollection">
-    <li data-bind="text: selfIdentifyName"></li>
-    <li data-bind="text: selfIdentifyCount"></li>
-    <br />
-</ul>
+</style>
+<div style="left: 15%; color:brown">
+    Stack Overflow 2017 Survey Results. <br/>
+    Sort by Country, and then click the relevant links.
+</div>
 
-<a href="#" data-bind="click: getOccupationStats">Occupation</a>
-<h2 data-bind="if: occupationCountry()">Occupation stats for <span data-bind="text: occupationCountry()"></span> </h2>
-<ul data-bind="foreach: occupationCollection">
-    <li data-bind="text: occupationName"></li>
-    <li data-bind="text: occupationCount"></li>
-    <br />
-</ul>
+<div id="heading">
+    <h2>Sort by Country:</h2>
+    <select id="countries" class="form-control input-lg" style="width: 300px">
+        <option selected="selected">United States</option>
+        @foreach (var item in Model)
+        {
+            <option value="@item">@item</option>
+        }
+    </select>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getTechUsingStats">Tech Using</a>
+        <h4 data-bind="text: techUsingCountry()"></h4>
+        <div data-bind="visible: isLoadingTechUsing">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: techUsingCollection()">
+            <tr>
+                <td data-bind="text: techUsingName"></td>
+                <td data-bind="text: techUsingCount"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getTechWantingStats">Tech Wanting</a>
+        <h4 data-bind="text: techWantingCountry()"></h4>
+        <div data-bind="visible: isLoadingTechWanting">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: techWantingCollection()">
+            <tr>
+                <td data-bind="text: techWantingName"></td>
+                <td data-bind="text: techWantingCount"></td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-<a href="#" data-bind="click: getExperienceStats">Experience</a>
-<h2 data-bind="if: experienceCountry()">Experience stats for <span data-bind="text: experienceCountry()"></span> </h2>
-<ul data-bind="if: experienceCollection()">
-    <li data-bind="text: experienceCollection().toFixed(2)"></li>
+<div class="row">
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getIndustryStats">Industry </a>
+        <h4 data-bind="text: industryCountry()"></h4>
+        <div data-bind="visible: isLoadingIndustry">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: industryCollection()">
+            <tr>
+                <td data-bind="text: industryName"></td>
+                <td data-bind="text: industryCount"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getOccupationStats">Occupation</a>
+        <h4 data-bind="text: occupationCountry()"></h4>
+        <div data-bind="visible: isLoadingOccupation">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: occupationCollection()">
+            <tr>
+                <td data-bind="text: occupationName"></td>
+                <td data-bind="text: occupationCount"></td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-</ul>
+<div class="row">
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getSalaryStats">Salary</a>
+        <h4 data-bind="text: salaryCountry()"></h4>
+        <div data-bind="visible: isLoadingSalary">Loading...</div>
+        <table class="table table-bordered" data-bind="if: salaryCollection">
+            <tr>
+                <td>$ <span data-bind="text: salaryCollection().toFixed(0)"></span> US</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getExperienceStats">Experience</a>
+        <h4 data-bind="text: experienceCountry()"></h4>
+        <div data-bind="visible: isLoadingExperience">Loading...</div>
+        <table class="table table-bordered" data-bind="if: experienceCollection">
+            <tr>
+                <td><span data-bind="text: experienceCollection().toFixed(2)"></span> years</td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-<a href="#" data-bind="click: getSalaryStats">Salary</a>
-<h2 data-bind="if: salaryCountry()">Salary stats for <span data-bind="text: salaryCountry()"></span> </h2>
-<ul data-bind="if: salaryCollection()">
-    <li>$<span data-bind="text: salaryCollection().toFixed(0)"></span> US </li>
-</ul>
+<div class="row">
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getGenderStats">Gender</a>
+        <h4 data-bind="text: genderCountry()"></h4>
+        <div data-bind="visible: isLoadingGender">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: genderCollection()">
+            <tr>
+                <td data-bind="text: genderName"></td>
+                <td data-bind="text: genderCount"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <a href="#" data-bind="click: getSelfIdentifyStats">Self Identify</a>
+        <h4 data-bind="text: selfIdentifyCountry()"></h4>
+        <div data-bind="visible: isLoadingSelfIdentify">Loading...</div>
+        <table class="table table-bordered" data-bind="foreach: selfIdentifyCollection()">
+            <tr>
+                <td data-bind="text: selfIdentifyName"></td>
+                <td data-bind="text: selfIdentifyCount"></td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-<a href="#" data-bind="click: getTechUsingStats">Tech Using</a>
-<h2 data-bind="if: techUsingCountry()">Tech Using stats for <span data-bind="text: techUsingCountry()"></span> </h2>
-<ul data-bind="foreach: techUsingCollection">
-    <li data-bind="text: techUsingName"></li>
-    <li data-bind="text: techUsingCount"></li>
-    <br />
-</ul>
 
-<a href="#" data-bind="click: getTechWantingStats">Tech Wanting</a>
-<h2 data-bind="if: techWantingCountry()">Tech Wanting stats for <span data-bind="text: techWantingCountry()"></span> </h2>
-<ul data-bind="foreach: techWantingCollection">
-    <li data-bind="text: techWantingName"></li>
-    <li data-bind="text: techWantingCount"></li>
-    <br />
-</ul>
-
-<a href="#" data-bind="click: getIndustryStats">Industry </a>
-<h2 data-bind="if: industryCountry()">Industry stats for <span data-bind="text: industryCountry()"></span> </h2>
-<ul data-bind="foreach: industryCollection">
-    <li data-bind="text: industryName"></li>
-    <li data-bind="text: industryCount"></li>
-    <br />
-</ul>
 
 @section scripts{
     <script>
@@ -84,6 +144,15 @@
 
         function StatsViewModel() {
             var self = this;
+
+            self.isLoadingGender = ko.observable(false);
+            self.isLoadingOccupation = ko.observable(false);
+            self.isLoadingSelfIdentify = ko.observable(false);
+            self.isLoadingExperience = ko.observable(false);
+            self.isLoadingSalary = ko.observable(false);
+            self.isLoadingIndustry = ko.observable(false);
+            self.isLoadingTechUsing = ko.observable(false);
+            self.isLoadingTechWanting = ko.observable(false);
 
             self.genderCountry = ko.observable();
             self.selfIdentifyCountry = ko.observable();
@@ -104,98 +173,118 @@
             self.techWantingCollection = ko.observableArray([]);
             self.industryCollection = ko.observableArray([]);
 
-            self.getGenderStats = function() {
+            self.getGenderStats = function () {
                 var country = $("#countries").val();
                 self.genderCountry(country);
+                self.genderCollection([]);
+                self.isLoadingGender(true);
                 var request = getStatsApi("getGenderStats", country).done(function () {
                     var result = request.responseJSON;
-                    self.genderCollection([]);
                     for (var i = 0; i < result.length; i++) {
                         self.genderCollection.push(new Gender(result[i].GenderName, result[i].GenderCount));
                     }
+                    self.isLoadingGender(false);
                 });
             }
-            self.getSelfIdentityStats = function() {
+            self.getSelfIdentifyStats = function () {
                 var country = $("#countries").val();
                 self.selfIdentifyCountry(country);
+                self.selfIdentifyCollection([]);
+                self.isLoadingSelfIdentify(true);
                 var request = getStatsApi("getSelfIdentifyStats", country).done(function () {
                     var result = request.responseJSON;
-                    self.selfIdentifyCollection([]);
                     for (var i = 0; i < result.length; i++) {
                         self.selfIdentifyCollection
                             .push(new SelfIdentify(result[i].SelfIdentifyName, result[i].SelfIdentifyCount));
                     }
+                    self.isLoadingSelfIdentify(false);
                 });
             }
-            self.getOccupationStats = function() {
+            self.getOccupationStats = function () {
                 var country = $("#countries").val();
                 self.occupationCountry(country);
-                var request = getStatsApi("getOccupationStats", country).done(function() {
+                self.occupationCollection([]);
+                self.isLoadingOccupation(true);
+                var request = getStatsApi("getOccupationStats", country).done(function () {
                     var result = request.responseJSON;
-                    self.occupationCollection([]);
                     for (var i = 0; i < result.length; i++) {
                         self.occupationCollection
                             .push(new Occupation(result[i].OccupationName, result[i].OccupationCount));
                     }
+                    self.isLoadingOccupation(false);
                 });
             }
-            self.getExperienceStats = function() {
+            self.getExperienceStats = function () {
                 var country = $("#countries").val();
                 self.experienceCountry(country);
+                self.experienceCollection("");
+                self.isLoadingExperience(true);
                 var request = getStatsApi("getExperienceStats", country).done(function () {
                     var result = request.responseJSON;
                     self.experienceCollection(result.YearsAgv);
+
+                    self.isLoadingExperience(false);
                 });
             }
-            self.getSalaryStats = function() {
+            self.getSalaryStats = function () {
                 var country = $("#countries").val();
                 self.salaryCountry(country);
-                var request = getStatsApi("getSalaryStats", country).done(function() {
+                self.salaryCollection("");
+                self.isLoadingSalary(true);
+                var request = getStatsApi("getSalaryStats", country).done(function () {
                     var result = request.responseJSON;
                     self.salaryCollection(result.SalaryAvg);
-                });
+
+                    self.isLoadingSalary(false);
+                });    
             }
             self.getTechUsingStats = function () {
                 var country = $("#countries").val();
                 self.techUsingCountry(country);
+                self.techUsingCollection([]);
+                self.isLoadingTechUsing(true);
                 var request = getStatsApi("getTechUsingStats", country).done(function () {
-                    var result = request.responseJSON;
-                    self.techUsingCollection([]);
+                    var result = request.responseJSON;           
                     for (var i = 0; i < result.length; i++) {
                         self.techUsingCollection
                             .push(new TechUsing(result[i].TechUsingName, result[i].TechUsingCount));
                     }
+                    self.isLoadingTechUsing(false);
                 });
             }
             self.getTechWantingStats = function () {
                 var country = $("#countries").val();
                 self.techWantingCountry(country);
+                self.techWantingCollection([]);
+                self.isLoadingTechWanting(true);
                 var request = getStatsApi("getTechWantingStats", country).done(function () {
                     var result = request.responseJSON;
-                    self.techWantingCollection([]);
                     for (var i = 0; i < result.length; i++) {
                         self.techWantingCollection
                             .push(new TechWanting(result[i].TechWantingName, result[i].TechWantingCount));
                     }
+                    self.isLoadingTechWanting(false);
                 });
             }
             self.getIndustryStats = function () {
                 var country = $("#countries").val();
                 self.industryCountry(country);
+                self.industryCollection([]);
+                self.isLoadingIndustry(true);
                 var request = getStatsApi("getIndustryStats", country).done(function () {
                     var result = request.responseJSON;
-                    self.industryCollection([]);
                     for (var i = 0; i < result.length; i++) {
                         self.industryCollection
                             .push(new Industry(result[i].IndustryName, result[i].IndustryCount));
                     }
+                    self.isLoadingIndustry(false);
                 });
             }
         }
 
         //Function Constructors:
 
-        var Gender = (function() {
+        var Gender = (function () {
             function gender(name, count) {
                 this.genderName = name;
                 this.genderCount = count;
@@ -204,7 +293,7 @@
             return gender;
         })();
 
-        var SelfIdentify = (function() {
+        var SelfIdentify = (function () {
             function selfIdentify(name, count) {
                 this.selfIdentifyName = name;
                 this.selfIdentifyCount = count;
@@ -213,7 +302,7 @@
             return selfIdentify;
         })();
 
-        var Occupation = (function() {
+        var Occupation = (function () {
             function occupation(name, count) {
                 this.occupationName = name;
                 this.occupationCount = count;
@@ -222,7 +311,7 @@
             return occupation;
         })();
 
-        var Experience = (function() {
+        var Experience = (function () {
             function experience(yearsAvg) {
                 this.yearsAvg = yearsAvg;
             }
@@ -230,7 +319,7 @@
             return experience;
         })();
 
-        var Salary = (function() {
+        var Salary = (function () {
             function salary(salaryAvg) {
                 this.salaryAvg = salaryAvg;
             }
@@ -238,7 +327,7 @@
             return salary;
         })();
 
-        var TechUsing = (function() {
+        var TechUsing = (function () {
             function techUsing(name, count) {
                 this.techUsingName = name;
                 this.techUsingCount = count;
@@ -247,7 +336,7 @@
             return techUsing;
         })();
 
-        var TechWanting = (function() {
+        var TechWanting = (function () {
             function techWanting(name, count) {
                 this.techWantingName = name;
                 this.techWantingCount = count;
@@ -256,7 +345,7 @@
             return techWanting;
         })();
 
-        var Industry = (function() {
+        var Industry = (function () {
             function industry(name, count) {
                 this.industryName = name;
                 this.industryCount = count;
